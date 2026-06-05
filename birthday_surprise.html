@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Happy Birthday My Love 💕</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#c0392b;font-family:'Poppins',sans-serif}
+
+/* ─── SCREENS ─────────────────────────────── */
+.screen{
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .7s ease;
+  overflow:hidden;
+}
+.screen.active{opacity:1;pointer-events:all}
+
+/* ─── 1. LOADING ─── */
+#s-load{background:#1a1a1a;color:#fff}
+.load-cat{font-size:60px;animation:bounce 1s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+.load-text{font-family:'Playfair Display',serif;font-style:italic;font-size:18px;color:#f8c8d4;margin-top:18px;letter-spacing:1px}
+.load-bar-wrap{width:260px;height:4px;background:rgba(255,255,255,.2);border-radius:4px;margin-top:20px;overflow:hidden}
+.load-bar{height:100%;width:0%;background:linear-gradient(90deg,#e74c7c,#f39c8d);border-radius:4px;transition:width .1s linear}
+.floating-star{position:absolute;font-size:14px;animation:starFloat 4s ease-in-out infinite;opacity:.5}
+@keyframes starFloat{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-20px) rotate(180deg)}}
+
+/* ─── 2. PASSCODE ─── */
+#s-pass{background:#c0392b}
+.pass-icon{font-size:36px;margin-bottom:10px;opacity:.8}
+.pass-label{font-family:'Playfair Display',serif;font-size:13px;color:rgba(255,255,255,.8);letter-spacing:3px;text-transform:uppercase;margin-bottom:20px}
+.pass-dots{display:flex;gap:14px;margin-bottom:28px}
+.pass-dot{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.6);transition:background .2s}
+.pass-dot.filled{background:#fff}
+.pass-grid{display:grid;grid-template-columns:repeat(3,72px);gap:12px}
+.pass-btn{
+  width:72px;height:72px;border-radius:50%;
+  background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.3);
+  color:#fff;font-size:22px;font-family:'Poppins',sans-serif;
+  cursor:pointer;transition:background .15s,transform .1s;
+}
+.pass-btn:hover{background:rgba(255,255,255,.3)}
+.pass-btn:active{transform:scale(.92)}
+.pass-btn.zero{grid-column:2}
+.pass-error{color:#ffcdd2;font-size:13px;margin-top:12px;height:16px;transition:opacity .3s}
+
+/* ─── 3. ENVELOPE / LETTER ─── */
+#s-env{background:#c0392b}
+.env-card{
+  background:#fff9f5;border-radius:4px;
+  padding:40px 36px 36px;
+  text-align:center;width:340px;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
+  position:relative;
+}
+.env-title{font-family:'Great Vibes',cursive;font-size:38px;color:#8b1a1a;margin-bottom:4px}
+.env-subtitle{font-family:'Playfair Display',serif;font-style:italic;font-size:14px;color:#c0392b;margin-bottom:28px}
+.envelope{
+  width:160px;height:110px;position:relative;margin:0 auto 20px;cursor:pointer;
+  transition:transform .3s;
+}
+.envelope:hover{transform:scale(1.05)}
+.env-body{
+  width:160px;height:110px;background:#c0392b;border-radius:4px;
+  position:absolute;top:0;left:0;
+}
+.env-flap{
+  position:absolute;top:0;left:0;width:0;height:0;
+  border-left:80px solid transparent;
+  border-right:80px solid transparent;
+  border-top:55px solid #a93226;
+  transition:transform .5s ease;transform-origin:top center;
+}
+.envelope:hover .env-flap{transform:rotateX(180deg)}
+.env-seal{
+  width:36px;height:36px;border-radius:50%;
+  background:radial-gradient(circle,#f39c12,#e67e22);
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;box-shadow:0 2px 8px rgba(0,0,0,.3);
+}
+.env-hint{font-size:12px;color:#999;font-style:italic}
+
+/* Letter popup */
+.letter-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);
+  display:flex;align-items:center;justify-content:center;
+  z-index:100;opacity:0;pointer-events:none;transition:opacity .4s;
+}
+.letter-overlay.open{opacity:1;pointer-events:all}
+.letter-paper{
+  background:#fff9f0;width:min(480px,90vw);
+  border-radius:8px;padding:48px 40px;
+  position:relative;max-height:85vh;overflow-y:auto;
+  box-shadow:0 30px 80px rgba(0,0,0,.4);
+  animation:letterDrop .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes letterDrop{from{transform:translateY(-40px) scale(.9)}to{transform:none}}
+.letter-top-line{
+  width:80%;height:1px;background:linear-gradient(90deg,transparent,#e8c4b8,transparent);
+  margin:0 auto 28px;
+}
+.letter-date{font-size:12px;color:#aaa;text-align:right;margin-bottom:20px;letter-spacing:1px}
+.letter-body{
+  font-family:'Playfair Display',serif;font-size:15px;color:#4a2020;
+  line-height:2;text-align:center;
+}
+.letter-body strong{font-family:'Great Vibes',cursive;font-size:28px;color:#c0392b;display:block;margin:10px 0}
+.letter-close{
+  position:absolute;top:16px;right:20px;font-size:20px;
+  cursor:pointer;color:#aaa;transition:color .2s;background:none;border:none;
+}
+.letter-close:hover{color:#c0392b}
+.letter-next-btn{
+  display:block;margin:28px auto 0;padding:12px 36px;
+  background:#c0392b;color:#fff;border:none;border-radius:50px;
+  font-size:14px;letter-spacing:1px;cursor:pointer;
+  font-family:'Poppins',sans-serif;
+  transition:background .2s,transform .2s;
+}
+.letter-next-btn:hover{background:#a93226;transform:scale(1.04)}
+
+/* ─── 4. PHOTO / VIDEO ─── */
+#s-photo{background:#c0392b}
+.polaroid{
+  background:#fff;padding:18px 18px 60px;
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+  transform:rotate(-2deg);
+  width:min(300px,85vw);position:relative;
+}
+.polaroid-img{
+  width:100%;aspect-ratio:1;background:#d4a5a5;
+  display:flex;align-items:center;justify-content:center;
+  font-size:60px;overflow:hidden;
+}
+.polaroid-img img{width:100%;height:100%;object-fit:cover}
+.polaroid-caption{
+  font-family:'Great Vibes',cursive;font-size:22px;
+  color:#c0392b;text-align:center;margin-top:12px;
+}
+.upload-hint{
+  margin-top:22px;font-size:12px;color:rgba(255,255,255,.7);
+  text-align:center;line-height:1.6;
+}
+.upload-btn{
+  margin-top:12px;padding:10px 28px;border-radius:50px;
+  background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.5);
+  color:#fff;font-size:13px;cursor:pointer;font-family:'Poppins',sans-serif;
+  transition:background .2s;
+}
+.upload-btn:hover{background:rgba(255,255,255,.35)}
+.next-btn{
+  margin-top:24px;padding:12px 38px;border-radius:50px;
+  background:#fff;color:#c0392b;border:none;
+  font-size:13px;letter-spacing:1px;cursor:pointer;
+  font-family:'Poppins',sans-serif;font-weight:500;
+  transition:transform .2s,box-shadow .2s;
+  box-shadow:0 4px 20px rgba(0,0,0,.2);
+}
+.next-btn:hover{transform:scale(1.05);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+
+/* ─── 5. CAKE / MAKE A WISH ─── */
+#s-cake{background:#0d0d0d;color:#fff}
+.wish-label{
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:22px;color:#f8c8d4;margin-bottom:30px;letter-spacing:2px;
+}
+.wish-label span{font-size:18px;opacity:.7}
+.cake-wrap{position:relative;cursor:pointer;transition:transform .3s}
+.cake-wrap:hover{transform:scale(1.05)}
+.cake-svg{width:180px;height:auto}
+/* candle flames */
+.flame{animation:flicker .4s ease-in-out infinite alternate;transform-origin:bottom center}
+@keyframes flicker{0%{transform:scaleX(1) scaleY(1)}100%{transform:scaleX(.8) scaleY(1.1)}}
+.flame2{animation:flicker .3s ease-in-out infinite alternate-reverse;transform-origin:bottom center}
+.flame3{animation:flicker .5s ease-in-out infinite alternate;transform-origin:bottom center}
+.blow-hint{font-size:13px;color:rgba(255,255,255,.5);margin-top:18px;font-style:italic}
+/* particles */
+.particle{
+  position:absolute;pointer-events:none;
+  font-size:20px;animation:particleBurst 1s ease forwards;
+}
+@keyframes particleBurst{
+  0%{opacity:1;transform:translate(0,0) scale(1)}
+  100%{opacity:0;transform:var(--tx) scale(0)}
+}
+
+/* ─── 6. FINAL ─── */
+#s-final{background:#0d0d0d;color:#fff;overflow-y:auto}
+.final-bg{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(13,13,13,0) 0%,rgba(13,13,13,.85) 50%,#0d0d0d 100%);
+  z-index:0;
+}
+.final-photo-bg{
+  position:absolute;inset:0;
+  background:#1a0a0a;
+  display:flex;align-items:center;justify-content:center;
+  font-size:80px;opacity:.2;
+}
+.final-content{
+  position:relative;z-index:1;text-align:center;
+  padding:40px 24px;max-width:600px;
+}
+.final-date{font-size:12px;letter-spacing:4px;color:rgba(255,255,255,.4);margin-bottom:16px;text-transform:uppercase}
+.final-title{
+  font-family:'Great Vibes',cursive;font-size:clamp(48px,10vw,80px);
+  color:#fff;text-shadow:0 0 40px rgba(231,76,60,.5);
+  line-height:1.1;margin-bottom:16px;
+}
+.final-sub{
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:15px;color:rgba(255,255,255,.6);margin-bottom:36px;line-height:1.7;
+}
+.read-letter-btn{
+  display:inline-block;padding:14px 42px;border-radius:50px;
+  border:1px solid rgba(255,255,255,.4);
+  background:rgba(255,255,255,.1);
+  color:#fff;font-size:13px;letter-spacing:2px;cursor:pointer;
+  font-family:'Poppins',sans-serif;
+  transition:background .2s,border .2s,transform .2s;
+  backdrop-filter:blur(4px);text-transform:uppercase;
+}
+.read-letter-btn:hover{background:rgba(255,255,255,.25);transform:scale(1.04)}
+/* confetti */
+.confetti{
+  position:fixed;top:-20px;pointer-events:none;z-index:200;
+  width:10px;height:10px;border-radius:2px;
+  animation:confettiFall linear forwards;
+}
+@keyframes confettiFall{
+  0%{transform:translateY(0) rotate(0deg);opacity:1}
+  100%{transform:translateY(110vh) rotate(720deg);opacity:0}
+}
+/* hearts float */
+.heart-float{
+  position:fixed;pointer-events:none;z-index:200;
+  font-size:18px;animation:heartRise linear forwards;opacity:.8;
+}
+@keyframes heartRise{
+  0%{transform:translateY(0);opacity:.8}
+  100%{transform:translateY(-110vh);opacity:0}
+}
+
+/* ─── TRANSITIONS ─── */
+.ribbon{position:absolute;top:16px;left:16px;font-size:22px;opacity:.7}
+.heart-corner{position:absolute;top:16px;right:16px;font-size:22px;color:rgba(255,255,255,.5)}
+</style>
+</head>
+<body>
+
+<!-- ══ SCREEN 1: LOADING ══ -->
+<div class="screen active" id="s-load">
+  <div class="floating-star" style="top:15%;left:10%;animation-delay:.5s">✦</div>
+  <div class="floating-star" style="top:20%;right:12%;animation-delay:1s">✧</div>
+  <div class="floating-star" style="bottom:25%;left:20%;animation-delay:1.5s">✦</div>
+  <div class="floating-star" style="bottom:20%;right:18%;animation-delay:.2s">✧</div>
+  <div class="floating-star" style="top:40%;left:5%;animation-delay:.8s">✦</div>
+  <div class="floating-star" style="top:60%;right:8%;animation-delay:1.2s">✧</div>
+  <div class="load-cat">🎂</div>
+  <div class="load-text">Loading your birthday surprise...</div>
+  <div class="load-bar-wrap"><div class="load-bar" id="loadBar"></div></div>
+</div>
+
+<!-- ══ SCREEN 2: PASSCODE ══ -->
+<div class="screen" id="s-pass">
+  <div class="pass-icon">🔒</div>
+  <div class="pass-label">Enter Passcode</div>
+  <div class="pass-dots">
+    <div class="pass-dot" id="d0"></div>
+    <div class="pass-dot" id="d1"></div>
+    <div class="pass-dot" id="d2"></div>
+    <div class="pass-dot" id="d3"></div>
+    <div class="pass-dot" id="d4"></div>
+    <div class="pass-dot" id="d5"></div>
+    <div class="pass-dot" id="d6"></div>
+    <div class="pass-dot" id="d7"></div>
+  </div>
+  <div class="pass-grid">
+    <button class="pass-btn" onclick="pressKey('1')">1</button>
+    <button class="pass-btn" onclick="pressKey('2')">2</button>
+    <button class="pass-btn" onclick="pressKey('3')">3</button>
+    <button class="pass-btn" onclick="pressKey('4')">4</button>
+    <button class="pass-btn" onclick="pressKey('5')">5</button>
+    <button class="pass-btn" onclick="pressKey('6')">6</button>
+    <button class="pass-btn" onclick="pressKey('7')">7</button>
+    <button class="pass-btn" onclick="pressKey('8')">8</button>
+    <button class="pass-btn" onclick="pressKey('9')">9</button>
+    <button class="pass-btn" onclick="pressKey('.')">.</button>
+    <button class="pass-btn zero" onclick="pressKey('0')">0</button>
+    <button class="pass-btn" onclick="pressKey('del')">⌫</button>
+  </div>
+  <div class="pass-error" id="passErr"></div>
+  <div style="margin-top:20px;font-size:12px;color:rgba(255,255,255,.4);font-style:italic">
+    Hint: Enter the special date (DDMMYYYY) e.g. 30062009
+  </div>
+</div>
+
+<!-- ══ SCREEN 3: ENVELOPE ══ -->
+<div class="screen" id="s-env">
+  <div class="ribbon">🎀</div>
+  <div class="heart-corner">♡</div>
+  <div class="env-card">
+    <div class="env-title">Happy Birthday!</div>
+    <div class="env-subtitle">My Love</div>
+    <div class="envelope" onclick="openLetter()">
+      <div class="env-body"></div>
+      <div class="env-flap"></div>
+      <div class="env-seal">💌</div>
+    </div>
+    <div class="env-hint">Click the envelope to read your letter ✉️</div>
+  </div>
+</div>
+
+<!-- Letter popup -->
+<div class="letter-overlay" id="letterOverlay">
+  <div class="letter-paper">
+    <button class="letter-close" onclick="closeLetter()">✕</button>
+    <div class="letter-top-line"></div>
+    <div class="letter-date" id="letterDate"></div>
+    <div class="letter-body">
+      <em>My Dearest,</em><br><br>
+      Aaj ka din bahut khaas hai — kyunki aaj tum is duniya mein aayi. 🌹<br><br>
+      Tumhare bina meri duniya adhoori hai. Tumhari har muskaan mujhe jeene ki wajah deti hai.<br><br>
+      <strong>Happy Birthday My Love 💕</strong>
+      Tumhari aankhon mein jo chamak hai, woh meri puri zindagi roshan kar deti hai.<br><br>
+      Main chahta hoon ki tumhari yeh birthday bahut khaas ho — kyunki tum mere liye is duniya ki sabse khaas insaan ho.<br><br>
+      <em>Hamesha tumhara,</em><br>
+      <strong style="font-size:22px;color:#8b1a1a">Your Person 💍</strong>
+    </div>
+    <div class="letter-top-line" style="margin-top:24px"></div>
+    <button class="letter-next-btn" onclick="closeLetter();goTo('s-photo')">See Your Surprise →</button>
+  </div>
+</div>
+
+<!-- ══ SCREEN 4: PHOTO ══ -->
+<div class="screen" id="s-photo">
+  <div class="ribbon">🎀</div>
+  <div class="polaroid">
+    <div class="polaroid-img" id="photoFrame">
+      <span style="font-size:50px">📸</span>
+    </div>
+    <div class="polaroid-caption">My Love 🌹</div>
+  </div>
+  <div class="upload-hint">Apni wife ki photo upload karo 💕<br>ya aise bhi aage ja sakte ho</div>
+  <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="loadPhoto(event)"/>
+  <button class="upload-btn" onclick="document.getElementById('photoInput').click()">📷 Upload Photo</button>
+  <button class="next-btn" onclick="goTo('s-cake')">Make a Wish →</button>
+</div>
+
+<!-- ══ SCREEN 5: CAKE ══ -->
+<div class="screen" id="s-cake">
+  <div class="wish-label">✨ Make a Wish ✨<br><span>Click the cake!</span></div>
+  <div class="cake-wrap" id="cakeWrap" onclick="blowCandles()">
+    <svg class="cake-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- candles -->
+      <rect x="72" y="60" width="8" height="30" rx="3" fill="#f9e4b7"/>
+      <rect x="96" y="50" width="8" height="40" rx="3" fill="#f9e4b7"/>
+      <rect x="120" y="60" width="8" height="30" rx="3" fill="#f9e4b7"/>
+      <!-- flames -->
+      <g class="flame" id="fl1">
+        <ellipse cx="76" cy="56" rx="5" ry="8" fill="#f39c12" opacity=".9"/>
+        <ellipse cx="76" cy="55" rx="3" ry="5" fill="#f9ca24"/>
+      </g>
+      <g class="flame2" id="fl2">
+        <ellipse cx="100" cy="46" rx="5" ry="8" fill="#f39c12" opacity=".9"/>
+        <ellipse cx="100" cy="45" rx="3" ry="5" fill="#f9ca24"/>
+      </g>
+      <g class="flame3" id="fl3">
+        <ellipse cx="124" cy="56" rx="5" ry="8" fill="#f39c12" opacity=".9"/>
+        <ellipse cx="124" cy="55" rx="3" ry="5" fill="#f9ca24"/>
+      </g>
+      <!-- top tier -->
+      <rect x="60" y="90" width="80" height="35" rx="6" fill="#f5c6d0"/>
+      <ellipse cx="100" cy="90" rx="40" ry="8" fill="#f8d7df"/>
+      <ellipse cx="100" cy="125" rx="40" ry="8" fill="#e8a0b0"/>
+      <!-- decorations top -->
+      <circle cx="80" cy="105" r="4" fill="#c0392b"/>
+      <circle cx="100" cy="108" r="4" fill="#c0392b"/>
+      <circle cx="120" cy="105" r="4" fill="#c0392b"/>
+      <!-- bottom tier -->
+      <rect x="40" y="125" width="120" height="45" rx="8" fill="#f08080"/>
+      <ellipse cx="100" cy="125" rx="60" ry="10" fill="#f5a0a0"/>
+      <ellipse cx="100" cy="170" rx="60" ry="10" fill="#d06060"/>
+      <!-- dots bottom -->
+      <circle cx="60" cy="148" r="5" fill="#fff" opacity=".6"/>
+      <circle cx="80" cy="143" r="5" fill="#fff" opacity=".6"/>
+      <circle cx="100" cy="148" r="5" fill="#fff" opacity=".6"/>
+      <circle cx="120" cy="143" r="5" fill="#fff" opacity=".6"/>
+      <circle cx="140" cy="148" r="5" fill="#fff" opacity=".6"/>
+      <!-- face -->
+      <circle cx="90" cy="150" r="3" fill="#8b1a1a" opacity=".5"/>
+      <circle cx="110" cy="150" r="3" fill="#8b1a1a" opacity=".5"/>
+      <path d="M88 160 Q100 168 112 160" stroke="#8b1a1a" stroke-width="2" fill="none" stroke-linecap="round" opacity=".5"/>
+    </svg>
+  </div>
+  <div class="blow-hint" id="blowHint">Tap the cake to blow the candles 🎂</div>
+</div>
+
+<!-- ══ SCREEN 6: FINAL ══ -->
+<div class="screen" id="s-final">
+  <div class="final-photo-bg">🌹</div>
+  <div class="final-bg"></div>
+  <div class="final-content">
+    <div class="final-date" id="todayDate"></div>
+    <div class="final-title">Happy Birthday Baby!</div>
+    <div class="final-sub">
+      I hope this little gift will make you happy 🌹<br>
+      This gift is like our love — thoughtful, unique, and made just for you.
+    </div>
+    <button class="read-letter-btn" onclick="openLetter2()">💌 Read Your Letter</button>
+  </div>
+</div>
+
+<!-- letter overlay for final screen -->
+<div class="letter-overlay" id="letterOverlay2">
+  <div class="letter-paper">
+    <button class="letter-close" onclick="document.getElementById('letterOverlay2').classList.remove('open')">✕</button>
+    <div class="letter-top-line"></div>
+    <div class="letter-date" id="letterDate2"></div>
+    <div class="letter-body">
+      <em>My Jaan,</em><br><br>
+      Yeh website maine sirf tumhare liye banayi — kyunki tumhara pyaar mere liye is duniya ki sabse badi nayamat hai.<br><br>
+      Har roz tum mujhe yaad dilaati ho ki zindagi kitni khoobsurat hai.<br><br>
+      <strong>Happy Birthday My Love 💕</strong>
+      Allah kare tumhari zindagi mein hamesha khushiyan rahen, gham kabhi na aaye.<br><br>
+      Main tumse is janam mein nahi, har janam mein mohabbat karta rahunga.<br><br>
+      <em>Hamesha aur hamesha tumhara,</em><br>
+      <strong style="font-size:22px;color:#8b1a1a">Tumhara Husband 💍</strong>
+    </div>
+    <div class="letter-top-line" style="margin-top:24px"></div>
+  </div>
+</div>
+
+<script>
+// ── helpers ──
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ── loading ──
+let prog=0;
+const bar=document.getElementById('loadBar');
+const loader=setInterval(()=>{
+  prog+=Math.random()*3+1;
+  if(prog>=100){prog=100;clearInterval(loader);
+    setTimeout(()=>goTo('s-pass'),600);
+  }
+  bar.style.width=prog+'%';
+},60);
+
+// ── passcode ──
+const PASS='30062009'; // 8-digit passcode
+let entered='';
+function pressKey(k){
+  if(k==='del'){entered=entered.slice(0,-1);}
+  else if(k==='.' || entered.length>=8)return;
+  else entered+=k;
+  for(let i=0;i<8;i++){
+    document.getElementById('d'+i).classList.toggle('filled',i<entered.length);
+  }
+  if(entered.length===8) checkPass();
+}
+function checkPass(){
+  if(entered===PASS){
+    setTimeout(()=>goTo('s-env'),300);
+  } else {
+    document.getElementById('passErr').textContent='Wrong passcode, try again 💔';
+    document.querySelectorAll('.pass-dot').forEach(d=>{d.style.background='#ff6b6b'});
+    setTimeout(()=>{
+      entered='';
+    document.querySelectorAll('.pass-dot').forEach(d=>{d.classList.remove('filled');d.style.background=''});
+      document.getElementById('passErr').textContent='';
+    },900);
+  }
+}
+
+// ── letter ──
+function openLetter(){
+  const d=new Date();
+  document.getElementById('letterDate').textContent=d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('letterOverlay').classList.add('open');
+}
+function closeLetter(){document.getElementById('letterOverlay').classList.remove('open');}
+function openLetter2(){
+  const d=new Date();
+  document.getElementById('letterDate2').textContent=d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('letterOverlay2').classList.add('open');
+}
+
+// ── photo ──
+function loadPhoto(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    const fr=document.getElementById('photoFrame');
+    fr.innerHTML='<img src="'+ev.target.result+'" style="width:100%;height:100%;object-fit:cover"/>';
+  };
+  r.readAsDataURL(f);
+}
+
+// ── cake ──
+let blown=false;
+function blowCandles(){
+  if(blown)return;blown=true;
+  // hide flames
+  ['fl1','fl2','fl3'].forEach(id=>{
+    const f=document.getElementById(id);
+    f.style.transition='opacity .4s';f.style.opacity='0';
+  });
+  document.getElementById('blowHint').textContent='✨ Wish made! ✨';
+  // burst particles
+  const emojis=['✨','🎉','💕','🌹','🎊','💖','⭐','🌸'];
+  const wrap=document.getElementById('cakeWrap');
+  const rect=wrap.getBoundingClientRect();
+  for(let i=0;i<16;i++){
+    const p=document.createElement('div');
+    p.className='particle';
+    p.textContent=emojis[i%emojis.length];
+    const angle=Math.random()*360;
+    const dist=80+Math.random()*80;
+    const tx='translate('+(Math.cos(angle*Math.PI/180)*dist)+'px,'+(Math.sin(angle*Math.PI/180)*dist-80)+'px)';
+    p.style.setProperty('--tx',tx);
+    p.style.left=(rect.left+rect.width/2)+'px';
+    p.style.top=(rect.top+rect.height/2)+'px';
+    p.style.position='fixed';
+    p.style.zIndex='200';
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),1100);
+  }
+  setTimeout(()=>{
+    goTo('s-final');
+    launchConfetti();
+    // set today date
+    const d=new Date();
+    document.getElementById('todayDate').textContent=d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  },1400);
+}
+
+// ── confetti + hearts ──
+function launchConfetti(){
+  const colors=['#c0392b','#e74c3c','#f39c12','#f9ca24','#ff6b9d','#fff','#f8c8d4'];
+  for(let i=0;i<60;i++){
+    setTimeout(()=>{
+      const c=document.createElement('div');
+      c.className='confetti';
+      c.style.left=Math.random()*100+'vw';
+      c.style.background=colors[Math.floor(Math.random()*colors.length)];
+      c.style.animationDuration=(2+Math.random()*2)+'s';
+      c.style.animationDelay=(Math.random()*1.5)+'s';
+      c.style.borderRadius=Math.random()>0.5?'50%':'2px';
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(),4000);
+    },i*50);
+  }
+  for(let i=0;i<20;i++){
+    setTimeout(()=>{
+      const h=document.createElement('div');
+      h.className='heart-float';
+      h.textContent=['❤️','💕','🌹','💖'][Math.floor(Math.random()*4)];
+      h.style.left=Math.random()*100+'vw';
+      h.style.bottom='0';
+      h.style.animationDuration=(3+Math.random()*3)+'s';
+      h.style.animationDelay=(Math.random()*2)+'s';
+      document.body.appendChild(h);
+      setTimeout(()=>h.remove(),6000);
+    },i*150);
+  }
+}
+</script>
+</body>
+</html>
